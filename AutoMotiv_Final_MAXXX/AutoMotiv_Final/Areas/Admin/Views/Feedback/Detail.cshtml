@@ -1,0 +1,106 @@
+@model FeedbackAdminDetailViewModel
+@{ ViewData["Title"] = "Chi tiết phản hồi"; }
+
+<div class="page-header">
+    <div class="breadcrumb-simple">
+        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a> /
+        <a asp-area="Admin" asp-controller="Feedback" asp-action="Index">Phản hồi</a> /
+        Chi tiết #@Model.Id
+    </div>
+    <div class="d-flex align-items-center gap-3 mt-1">
+        <a asp-area="Admin" asp-controller="Feedback" asp-action="Index" class="btn btn-outline-secondary btn-sm px-3">
+            <i class="fa-solid fa-arrow-left me-1"></i>Quay lại
+        </a>
+        <h1 class="page-title mb-0">Phản hồi #@Model.Id</h1>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <!-- Thông tin người gửi -->
+        <div class="acard mb-3">
+            <div class="acard-header">
+                <span class="acard-title"><i class="fa-solid fa-user me-2"></i>Thông tin người gửi</span>
+                @if (Model.IsGuest)
+                {
+                    <span class="badge-pill badge-gray">Khách vãng lai</span>
+                }
+                else
+                {
+                    <span class="badge-pill badge-purple">Thành viên</span>
+                }
+            </div>
+            <div class="acard-body">
+                <div class="row g-3">
+                    <div class="col-sm-4">
+                        <div style="font-size:.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem;">Tên</div>
+                        <div class="fw-semibold">@Model.DisplayName</div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.GuestEmail) || Model.Username != null)
+                    {
+                        <div class="col-sm-4">
+                            <div style="font-size:.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem;">Email</div>
+                            <div class="fw-semibold">@(Model.GuestEmail ?? "—")</div>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.GuestPhone))
+                    {
+                        <div class="col-sm-4">
+                            <div style="font-size:.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem;">Điện thoại</div>
+                            <div class="fw-semibold">@Model.GuestPhone</div>
+                        </div>
+                    }
+                    <div class="col-sm-4">
+                        <div style="font-size:.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem;">Ngày gửi</div>
+                        <div class="fw-semibold">@Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nội dung phản hồi -->
+        <div class="acard mb-3">
+            <div class="acard-header">
+                <span class="acard-title"><i class="fa-solid fa-message me-2"></i>@Model.Title</span>
+            </div>
+            <div class="acard-body">
+                <div style="background:#f9fafb;border-radius:10px;padding:1rem;font-size:.875rem;line-height:1.7;white-space:pre-wrap;">@Model.Content</div>
+            </div>
+        </div>
+
+        <!-- Phản hồi admin -->
+        @if (!string.IsNullOrWhiteSpace(Model.AdminReply))
+        {
+            <div class="acard">
+                <div class="acard-header">
+                    <span class="acard-title" style="color:#059669;"><i class="fa-solid fa-reply me-2"></i>Phản hồi của Admin</span>
+                    <span style="font-size:.75rem;color:#9ca3af;">@Model.ReplyDate?.ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+                <div class="acard-body">
+                    <div style="background:#ecfdf5;border-radius:10px;padding:1rem;font-size:.875rem;line-height:1.7;color:#065f46;white-space:pre-wrap;">@Model.AdminReply</div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Sidebar actions -->
+    <div class="col-lg-4">
+        <div class="acard">
+            <div class="acard-header"><span class="acard-title">Hành động</span></div>
+            <div class="acard-body d-grid gap-2">
+                <a asp-area="Admin" asp-controller="Feedback" asp-action="Reply" asp-route-id="@Model.Id"
+                   class="btn btn-primary">
+                    <i class="fa-solid fa-reply me-2"></i>
+                    @(string.IsNullOrWhiteSpace(Model.AdminReply) ? "Trả lời" : "Sửa trả lời")
+                </a>
+                <form asp-area="Admin" asp-controller="Feedback" asp-action="Delete" asp-route-id="@Model.Id"
+                      method="post" onsubmit="return confirm('Xóa phản hồi này?')">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-outline-secondary w-100" style="color:#dc2626;border-color:#fecaca;">
+                        <i class="fa-solid fa-trash me-2"></i>Xóa phản hồi
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

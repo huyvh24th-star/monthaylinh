@@ -1,0 +1,106 @@
+@model OrderAdminDetailViewModel
+@{ ViewData["Title"] = "Chi tiết đơn hàng"; }
+
+<div class="page-header">
+    <div class="breadcrumb-simple">
+        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a> /
+        <a asp-area="Admin" asp-controller="Order" asp-action="Index">Đơn hàng</a> /
+        #@Model.Id
+    </div>
+    <div class="d-flex align-items-center gap-3 mt-1">
+        <a asp-area="Admin" asp-controller="Order" asp-action="Index" class="btn btn-outline-secondary btn-sm px-3">
+            <i class="fa-solid fa-arrow-left me-1"></i>Quay lại
+        </a>
+        <h1 class="page-title mb-0">Đơn hàng #@Model.Id</h1>
+        @{
+            var bc = Model.Status switch {
+                "Đang xử lý" => "badge-warning",
+                "Đang giao"  => "badge-info",
+                "Đã giao"    => "badge-success",
+                "Đã hủy"     => "badge-danger",
+                _            => "badge-gray"
+            };
+        }
+        <span class="badge-pill @bc" style="font-size:.82rem;padding:.35em .9em;">@Model.Status</span>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-5">
+        <div class="acard">
+            <div class="acard-header"><span class="acard-title">Thông tin đơn hàng</span></div>
+            <div class="acard-body">
+                <div class="d-flex flex-column gap-3">
+                    @{
+                        void InfoRow(string label, string value) { }
+                    }
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom" style="border-color:#f3f4f6!important;">
+                        <span style="font-size:.78rem;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;">Khách hàng</span>
+                        <span class="fw-semibold" style="font-size:.875rem;">@(Model.CustomerUsername ?? "Khách vãng lai")</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom" style="border-color:#f3f4f6!important;">
+                        <span style="font-size:.78rem;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;">Người nhận</span>
+                        <span class="fw-semibold" style="font-size:.875rem;">@Model.ReceiverName</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom" style="border-color:#f3f4f6!important;">
+                        <span style="font-size:.78rem;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;">Điện thoại</span>
+                        <span style="font-size:.875rem;">@Model.Phone</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-start py-1 border-bottom" style="border-color:#f3f4f6!important;">
+                        <span style="font-size:.78rem;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0;">Địa chỉ</span>
+                        <span style="font-size:.875rem;text-align:right;max-width:60%;">@Model.Address</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom" style="border-color:#f3f4f6!important;">
+                        <span style="font-size:.78rem;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;">Ngày đặt</span>
+                        <span style="font-size:.875rem;">@Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-1">
+                        <span style="font-size:.78rem;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;">Tổng tiền</span>
+                        <span class="fw-bold" style="font-size:1.1rem;color:var(--ap);">@Model.Total.ToString("#,##0")đ</span>
+                    </div>
+                </div>
+                <div class="mt-3 pt-3 border-top" style="border-color:#f3f4f6!important;">
+                    <a asp-area="Admin" asp-controller="Order" asp-action="UpdateStatus" asp-route-id="@Model.Id"
+                       class="btn btn-primary btn-sm px-4 w-100">
+                        <i class="fa-solid fa-pen me-2"></i>Cập nhật trạng thái
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="acard">
+            <div class="acard-header"><span class="acard-title">Sản phẩm trong đơn</span></div>
+            <div class="atable-wrap">
+                <table class="atable">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th class="text-center">SL</th>
+                            <th class="text-end">Đơn giá</th>
+                            <th class="text-end">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td style="font-size:.875rem;font-weight:500;">@item.ProductName</td>
+                                <td class="text-center">@item.Quantity</td>
+                                <td class="text-end" style="font-size:.85rem;">@item.Price.ToString("#,##0")đ</td>
+                                <td class="text-end fw-bold" style="color:var(--ap);">@((item.Price * item.Quantity).ToString("#,##0"))đ</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr style="background:#fafbfe;">
+                            <td colspan="3" class="text-end fw-bold" style="font-size:.875rem;">Tổng cộng:</td>
+                            <td class="text-end fw-bold" style="font-size:1rem;color:var(--ap);">@Model.Total.ToString("#,##0")đ</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

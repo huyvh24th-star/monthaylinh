@@ -1,0 +1,75 @@
+@model List<Web.Models.OrderViewModel>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="text-center py-5">
+        <div style="width:80px;height:80px;background:#f5f7fa;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;">
+            <i class="fa-solid fa-car opacity-25" style="font-size:2rem;"></i>
+        </div>
+        <p class="text-muted">Bạn chưa có đơn đặt xe nào.</p>
+        <a asp-controller="Product" asp-action="Index" class="btn btn-primary rounded-pill px-5 py-2 mt-2" style="text-transform:uppercase;font-weight:700;letter-spacing:0.06em;">
+            Xem kho xe ngay
+        </a>
+    </div>
+}
+else
+{
+    <div class="my-orders-container">
+        @foreach (var order in Model)
+        {
+            <div class="order-card">
+                <div class="order-header pb-3 mb-3 d-flex justify-content-between align-items-start flex-wrap gap-2">
+                    <div>
+                        <span class="fw-bold" style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.06em;">Đơn #@order.Id</span>
+                        <div class="text-muted small mt-1"><i class="fa-regular fa-calendar me-1"></i>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</div>
+                    </div>
+                    <div class="text-end">
+                        @{
+                            var statusClass = order.Status switch {
+                                "Đang xử lý" => "bg-warning text-dark",
+                                "Đang giao"  => "bg-primary",
+                                "Đã giao"    => "bg-success",
+                                "Đã hủy"     => "bg-danger",
+                                _            => "bg-secondary"
+                            };
+                        }
+                        <span class="badge @statusClass rounded-pill px-3 py-2">@order.Status</span>
+                    </div>
+                </div>
+
+                @if (order.Items?.Any() == true)
+                {
+                    @foreach (var item in order.Items)
+                    {
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            @if (!string.IsNullOrEmpty(item.ProductImage))
+                            {
+                                <img src="@item.ProductImage" style="width:70px;height:50px;object-fit:cover;border-radius:8px;" alt="@item.ProductName">
+                            }
+                            else
+                            {
+                                <div style="width:70px;height:50px;background:var(--bg-warm);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                                    <i class="fa-solid fa-car text-muted"></i>
+                                </div>
+                            }
+                            <div class="flex-grow-1">
+                                <div class="fw-bold small">@item.ProductName</div>
+                                <div class="text-muted" style="font-size:0.78rem;">SL: @item.Quantity × @item.Price.ToString("N0")đ</div>
+                            </div>
+                        </div>
+                    }
+                }
+
+                <div class="d-flex justify-content-between align-items-center mt-3 pt-3" style="border-top:1px solid var(--border-warm);">
+                    <div>
+                        <div class="text-muted small">Giao tới: <strong>@order.Address</strong></div>
+                        <div class="text-muted small">Người nhận: <strong>@order.ReceiverName</strong></div>
+                    </div>
+                    <div class="fw-bold" style="color:var(--accent-color);font-size:1.1rem;">
+                        @order.FormattedTotal
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

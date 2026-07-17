@@ -1,0 +1,148 @@
+@model List<ProductViewModel>
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="hero-image-overlay"></div>
+    <div class="container">
+        <div class="row align-items-center" style="min-height:100vh;">
+            <div class="col-lg-7 animate__animated animate__fadeIn">
+                <span class="hero-subtitle">Showroom xe chính hãng</span>
+                <h1 class="hero-title">Lái xe <br><span class="text-italic">đẳng cấp</span><br>của bạn</h1>
+                <p class="hero-desc">AutoMotiv cung cấp những mẫu xe ô tô cao cấp, chính hãng với giá cạnh tranh nhất thị trường — tư vấn tận tâm, thủ tục nhanh chóng.</p>
+                <div class="d-flex gap-3 mt-5 flex-wrap">
+                    <a asp-controller="Product" asp-action="Index" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">
+                        <i class="fa-solid fa-car me-2"></i>Xem xe ngay
+                    </a>
+                    <a asp-controller="Feedback" asp-action="Contact" class="btn btn-outline-dark btn-lg rounded-pill px-5 py-3">
+                        Tư vấn miễn phí
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div>
+                        <div class="hero-stat-num">500+</div>
+                        <div class="hero-stat-label">Xe trong kho</div>
+                    </div>
+                    <div>
+                        <div class="hero-stat-num">12K+</div>
+                        <div class="hero-stat-label">Khách hàng tin tưởng</div>
+                    </div>
+                    <div>
+                        <div class="hero-stat-num">15+</div>
+                        <div class="hero-stat-label">Năm kinh nghiệm</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Brand Strip -->
+<div class="brand-strip">
+    <div class="container">
+        <div class="d-flex justify-content-center align-items-center gap-5 flex-wrap">
+            <div class="brand-logo-item">Toyota</div>
+            <div class="brand-logo-item">Honda</div>
+            <div class="brand-logo-item">Hyundai</div>
+            <div class="brand-logo-item">Mercedes</div>
+            <div class="brand-logo-item">BMW</div>
+            <div class="brand-logo-item">Kia</div>
+            <div class="brand-logo-item">Mazda</div>
+        </div>
+    </div>
+</div>
+
+<!-- About Section -->
+<div class="container py-5 my-5">
+    <div class="row g-5 align-items-center">
+        <div class="col-md-6">
+            <div class="about-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1000&auto=format&fit=crop"
+                     class="img-fluid rounded-about shadow animate__animated animate__fadeInLeft"
+                     style="border-radius:1.5rem;"
+                     alt="Showroom AutoMotiv">
+                <div class="about-badge animate__animated animate__zoomIn">
+                    <span class="fs-1 fw-bold" style="line-height:1;">15+</span>
+                    <span class="small fw-bold text-uppercase" style="letter-spacing:0.08em;">Năm kinh nghiệm</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 ps-md-5 animate__animated animate__fadeInRight">
+            <span style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;color:var(--accent-color);">Về chúng tôi</span>
+            <h2 class="section-title mb-4 mt-2">Showroom uy tín<br>hàng đầu Việt Nam</h2>
+            <p class="text-muted fs-5 mb-4" style="line-height:1.8;">AutoMotiv là đại lý xe ô tô chính hãng với hơn 15 năm kinh nghiệm. Chúng tôi cam kết mang đến dịch vụ mua xe tốt nhất — từ tư vấn, thử xe đến hỗ trợ tài chính và bảo dưỡng sau bán.</p>
+            <div class="row mt-4 g-3">
+                <div class="col-6">
+                    <div class="feature-item">
+                        <i class="fa-solid fa-shield-check text-success mb-3 fs-3"></i>
+                        <h5 class="fw-bold">Xe chính hãng</h5>
+                        <p class="small text-muted mb-0">100% xe có giấy tờ, nguồn gốc rõ ràng.</p>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="feature-item">
+                        <i class="fa-solid fa-hand-holding-dollar text-warning mb-3 fs-3"></i>
+                        <h5 class="fw-bold">Hỗ trợ vay vốn</h5>
+                        <p class="small text-muted mb-0">Lãi suất ưu đãi, thủ tục nhanh trong 24h.</p>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="feature-item">
+                        <i class="fa-solid fa-screwdriver-wrench text-info mb-3 fs-3"></i>
+                        <h5 class="fw-bold">Bảo dưỡng trọn đời</h5>
+                        <p class="small text-muted mb-0">Đội ngũ kỹ thuật viên chuyên nghiệp.</p>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="feature-item">
+                        <i class="fa-solid fa-tags text-danger mb-3 fs-3"></i>
+                        <h5 class="fw-bold">Giá cạnh tranh</h5>
+                        <p class="small text-muted mb-0">Cam kết giá tốt nhất thị trường.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Cars Section -->
+@if (Model.Any())
+{
+    <div style="background:var(--primary-color);padding:80px 0;">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;color:var(--accent-color);">Lựa chọn hàng đầu</span>
+                <h2 class="section-title mt-2" style="color:white;">Xe nổi bật</h2>
+                <p style="color:rgba(255,255,255,0.5);margin-top:0.5rem;">Những mẫu xe được khách hàng quan tâm nhiều nhất tại AutoMotiv</p>
+            </div>
+            <div class="row g-4">
+                @await Html.PartialAsync("~/Views/Product/_ProductGridPartial.cshtml", Model)
+            </div>
+            <div class="text-center mt-5">
+                <a asp-controller="Product" asp-action="Index" class="btn btn-outline-light rounded-pill px-5 py-3 fw-bold">
+                    Xem tất cả xe <i class="fa-solid fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- CTA Section -->
+<div class="container py-5 my-5">
+    <div class="row g-0 rounded-4 overflow-hidden shadow-lg" style="background:var(--accent-color);">
+        <div class="col-md-7 p-5 d-flex flex-column justify-content-center">
+            <h2 class="text-white fw-800 mb-3" style="font-family:'Barlow Condensed',sans-serif;font-size:2.5rem;text-transform:uppercase;">
+                Đặt lịch lái thử miễn phí hôm nay
+            </h2>
+            <p class="text-white mb-4" style="opacity:0.85;">Trải nghiệm cảm giác lái trước khi quyết định. Đội ngũ tư vấn luôn sẵn sàng hỗ trợ bạn.</p>
+            <div>
+                <a asp-controller="Feedback" asp-action="Contact" class="btn btn-light rounded-pill px-5 py-3 fw-bold" style="color:var(--accent-color);">
+                    <i class="fa-solid fa-calendar-check me-2"></i>Đặt lịch ngay
+                </a>
+            </div>
+        </div>
+        <div class="col-md-5 d-none d-md-block" style="background:url('https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?q=80&w=800&auto=format&fit=crop') center/cover;min-height:280px;"></div>
+    </div>
+</div>

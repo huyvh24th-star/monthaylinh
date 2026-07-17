@@ -1,0 +1,471 @@
+@using Web.Models
+@inject Web.Helpers.SiteSettingsService SiteSettingsService
+@{
+    var settings = SiteSettingsService.GetSettings();
+    string siteName = settings.SiteName;
+    string primaryColor = settings.PrimaryColor;
+    string accentColor = settings.AccentColor;
+    var currentPath = Context.Request.Path.Value?.ToLower() ?? "";
+    string ActiveIf(string seg) => currentPath.Contains(seg) ? "active" : "";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] — @siteName Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --ap: #ff3b30;
+            --ap-gradient: linear-gradient(135deg, #ff3b30 0%, #ff9f0a 100%);
+            --bg-dark: #07080b;
+            --header-bg: rgba(13, 16, 25, 0.85);
+            --panel-bg: rgba(18, 23, 35, 0.7);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-mute: #94a3b8;
+            --radius: 16px;
+            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            --glow: 0 0 15px rgba(255, 59, 48, 0.25);
+            --glow-green: 0 0 15px rgba(52, 211, 153, 0.25);
+            --glow-orange: 0 0 15px rgba(251, 191, 36, 0.25);
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body { font-family: 'Outfit', sans-serif; background: var(--bg-dark); color: var(--text-main); margin: 0; }
+        .text-muted { color: var(--text-mute) !important; }
+
+        /* ===== HEADER (TOP NAV) ===== */
+        #header {
+            position: sticky; top: 0; z-index: 1040;
+            background: var(--header-bg);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--panel-border);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+        }
+        .header-top {
+            height: 65px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .header-brand {
+            display: flex; align-items: center; gap: .75rem;
+            text-decoration: none;
+        }
+        .header-logo {
+            width: 38px; height: 38px; border-radius: 10px;
+            background: var(--ap-gradient); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.05rem; flex-shrink: 0;
+            box-shadow: var(--glow);
+        }
+        .header-brand-title { color: #fff; font-weight: 700; font-size: 1.1rem; line-height: 1.2; letter-spacing: 0.01em; }
+        .header-brand-sub { color: var(--text-mute); font-size: .68rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
+
+        .header-controls { display: flex; align-items: center; gap: .75rem; }
+        .header-icon-btn {
+            width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--panel-border);
+            background: rgba(255,255,255,0.03); color: var(--text-mute);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all .2s; font-size: .92rem; position: relative;
+            text-decoration: none;
+        }
+        .header-icon-btn:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.15); }
+        .header-user {
+            display: flex; align-items: center; gap: .65rem;
+            padding: .35rem .75rem; 
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--panel-border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+        .header-user:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.15);
+        }
+        .header-avatar {
+            width: 26px; height: 26px; border-radius: 6px;
+            background: var(--ap-gradient); color: #fff; font-size: .75rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--glow);
+        }
+        .header-user-name { font-weight: 600; font-size: .85rem; color: var(--text-main); }
+
+        /* ===== NAVIGATION BAR ===== */
+        .header-bottom {
+            height: 50px;
+            padding: 0 2rem;
+            display: flex; align-items: center;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none; /* Firefox */
+        }
+        .header-bottom::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+        .nav-tabs-custom {
+            display: flex; gap: 0.5rem;
+            list-style: none; padding: 0; margin: 0;
+            height: 100%; align-items: center;
+        }
+        .nav-tab-link {
+            display: flex; align-items: center; gap: .5rem;
+            padding: .45rem .85rem; border-radius: 8px;
+            color: var(--text-mute); font-size: .88rem; font-weight: 600;
+            text-decoration: none; transition: all .25s ease;
+            border: 1px solid transparent;
+        }
+        .nav-tab-link i { font-size: .9rem; opacity: 0.7; }
+        .nav-tab-link:hover { color: #fff; background: rgba(255,255,255,0.03); }
+        .nav-tab-link.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--panel-border);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+            position: relative;
+        }
+        .nav-tab-link.active::after {
+            content: '';
+            position: absolute; bottom: -8px; left: 15%; right: 15%;
+            height: 3px; background: var(--ap);
+            border-radius: 3px 3px 0 0;
+            box-shadow: var(--glow);
+        }
+        .nav-tab-link.active i { opacity: 1; color: var(--ap); }
+
+        /* ===== MAIN CONTAINER ===== */
+        #main-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2rem;
+            width: 100%;
+        }
+
+        /* ===== CARD (BENTO BOX) ===== */
+        .acard {
+            background: var(--panel-bg); 
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius); 
+            border: 1px solid var(--panel-border);
+            box-shadow: var(--shadow); 
+            overflow: hidden;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .acard:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .acard-header {
+            padding: 1.25rem 1.5rem; 
+            border-bottom: 1px solid var(--panel-border);
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 1rem;
+        }
+        .acard-title { font-size: 1rem; font-weight: 700; color: #fff; margin: 0; letter-spacing: -0.01em; }
+        .acard-body { padding: 1.5rem; }
+
+        /* ===== STAT CARDS ===== */
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
+        .stat-card {
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius); 
+            padding: 1.5rem;
+            border: 1px solid var(--panel-border);
+            box-shadow: var(--shadow); 
+            position: relative; 
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+        }
+        .stat-card:hover { 
+            transform: translateY(-4px); 
+            border-color: rgba(255,255,255,0.18);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.5);
+        }
+        .stat-card.revenue:hover { box-shadow: var(--glow-orange); }
+        .stat-card.orders:hover { box-shadow: var(--glow); }
+        .stat-card.customers:hover { box-shadow: var(--glow-green); }
+        .stat-card.products:hover { box-shadow: 0 0 15px rgba(124, 58, 237, 0.25); }
+        .stat-card.feedbacks:hover { box-shadow: 0 0 15px rgba(236, 72, 153, 0.25); }
+        
+        .stat-icon {
+            width: 46px; height: 46px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; margin-bottom: 1rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .stat-label { font-size: .75rem; font-weight: 700; color: var(--text-mute); text-transform: uppercase; letter-spacing: .08em; }
+        .stat-value { font-size: 1.85rem; font-weight: 800; color: #fff; line-height: 1.1; margin: .3rem 0 .3rem; letter-spacing: -0.02em; }
+        .stat-note { font-size: .8rem; color: var(--text-mute); font-weight: 500; }
+        .stat-bg-icon {
+            position: absolute; right: -12px; top: -12px;
+            font-size: 5.5rem; opacity: .025; transform: rotate(-15deg);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover .stat-bg-icon {
+            transform: scale(1.1) rotate(-10deg);
+            opacity: .05;
+        }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header { margin-bottom: 2rem; }
+        .page-title { font-size: 1.75rem; font-weight: 800; color: #fff; margin: 0; letter-spacing: -0.02em; }
+        .page-sub { color: var(--text-mute); font-size: .88rem; margin: .3rem 0 0; }
+        .breadcrumb-simple { font-size: .78rem; color: var(--text-mute); margin-bottom: .4rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+        .breadcrumb-simple a { color: var(--text-mute); text-decoration: none; }
+        .breadcrumb-simple a:hover { color: var(--ap); }
+
+        /* ===== TABLE ===== */
+        .atable { width: 100%; border-collapse: collapse; }
+        .atable th {
+            padding: .85rem 1.25rem; font-size: .75rem; font-weight: 700; color: var(--text-mute);
+            text-transform: uppercase; letter-spacing: .08em;
+            border-bottom: 1px solid var(--panel-border); white-space: nowrap; 
+            background: rgba(255,255,255,0.01);
+        }
+        .atable td { padding: .95rem 1.25rem; font-size: .9rem; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; }
+        .atable tbody tr:last-child td { border-bottom: none; }
+        .atable tbody tr { transition: all 0.2s ease; }
+        .atable tbody tr:hover td { background: rgba(255, 255, 255, 0.02); }
+        .atable-wrap { overflow-x: auto; }
+
+        /* ===== BADGES ===== */
+        .badge-pill { padding: .4em .85em; border-radius: 20px; font-size: .75rem; font-weight: 700; white-space: nowrap; border: 1px solid transparent; }
+        .badge-success { background: rgba(16, 185, 129, 0.1); color: #34d399; border-color: rgba(16, 185, 129, 0.2); }
+        .badge-warning { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border-color: rgba(245, 158, 11, 0.2); }
+        .badge-danger  { background: rgba(239, 68, 68, 0.1); color: #f87171; border-color: rgba(239, 68, 68, 0.2); }
+        .badge-info    { background: rgba(59, 130, 246, 0.1); color: #60a5fa; border-color: rgba(59, 130, 246, 0.2); }
+        .badge-gray    { background: rgba(156, 163, 175, 0.1); color: #d1d5db; border-color: rgba(156, 163, 175, 0.2); }
+        .badge-purple  { background: rgba(139, 92, 246, 0.1); color: #a78bfa; border-color: rgba(139, 92, 246, 0.2); }
+
+        /* ===== AVATAR INITIALS ===== */
+        .av {
+            width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .75rem; font-weight: 700; color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        /* ===== ACTION BUTTONS ===== */
+        .act-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; border-radius: 8px; border: 1px solid transparent;
+            font-size: .85rem; cursor: pointer; transition: all .2s;
+            text-decoration: none;
+        }
+        .act-btn-view  { background: rgba(59, 130, 246, 0.1); color: #60a5fa; border-color: rgba(59, 130, 246, 0.15); }
+        .act-btn-edit  { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border-color: rgba(245, 158, 11, 0.15); }
+        .act-btn-reply { background: rgba(16, 185, 129, 0.1); color: #34d399; border-color: rgba(16, 185, 129, 0.15); }
+        .act-btn-del   { background: rgba(239, 68, 68, 0.1); color: #f87171; border-color: rgba(239, 68, 68, 0.15); }
+        .act-btn:hover { filter: brightness(1.2); transform: scale(1.1) translateY(-1px); }
+
+        /* ===== SEARCH BAR IN TABLE ===== */
+        .table-toolbar {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: .75rem; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--panel-border); flex-wrap: wrap;
+        }
+        .table-search {
+            display: flex; align-items: center; gap: .5rem;
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid var(--panel-border);
+            border-radius: 10px; padding: .45rem 1rem;
+            min-width: 240px;
+            transition: all 0.2s;
+        }
+        .table-search:focus-within {
+            border-color: var(--ap);
+            background: rgba(255,255,255,0.05);
+            box-shadow: var(--glow);
+        }
+        .table-search input { border: none; background: transparent; outline: none; font-size: .85rem; color: #fff; }
+        .table-search input::placeholder { color: var(--text-mute); opacity: 0.7; }
+        .table-search i { color: var(--text-mute); font-size: .85rem; }
+
+        /* ===== FORM CONTROLS ===== */
+        .form-control, .form-select {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--panel-border); 
+            border-radius: 10px;
+            font-size: .9rem; padding: .65rem 1rem;
+            color: #fff;
+            transition: all .2s;
+        }
+        .form-control:focus, .form-select:focus {
+            background: rgba(255,255,255,0.06);
+            border-color: var(--ap); 
+            box-shadow: var(--glow); 
+            outline: none;
+            color: #fff;
+        }
+        .form-control::placeholder { color: var(--text-mute); opacity: 0.6; }
+        label.form-label { font-size: .8rem; font-weight: 600; color: var(--text-mute); margin-bottom: .45rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        /* ===== BUTTONS ===== */
+        .btn { border-radius: 10px; font-weight: 600; font-size: .9rem; transition: all .2s cubic-bezier(0.25, 0.8, 0.25, 1); padding: .65rem 1.25rem; }
+        .btn-primary { background: var(--ap-gradient); border: none; color: #fff; box-shadow: var(--glow); }
+        .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); box-shadow: 0 5px 15px rgba(255, 59, 48, 0.4); }
+        .btn-outline-secondary { border-color: var(--panel-border); background: rgba(255,255,255,0.03); color: var(--text-main); }
+        .btn-outline-secondary:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: #fff; }
+
+        /* ===== ALERTS ===== */
+        .alert { border-radius: var(--radius); border: 1px solid transparent; font-size: .9rem; box-shadow: var(--shadow); }
+        .alert-success { background: rgba(16, 185, 129, 0.1); color: #34d399; border-color: rgba(16, 185, 129, 0.2); box-shadow: var(--glow-green); }
+        .alert-danger  { background: rgba(239, 68, 68, 0.1); color: #f87171; border-color: rgba(239, 68, 68, 0.2); box-shadow: var(--glow); }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state { padding: 4rem 1rem; text-align: center; color: var(--text-mute); }
+        .empty-state i { font-size: 3rem; opacity: .3; margin-bottom: 1rem; color: var(--text-mute); }
+        .empty-state p { font-size: .9rem; margin: 0; }
+
+        /* ===== RESPONSIVE ===== */
+        @@media (max-width: 991px) {
+            .header-top { padding: 0 1.25rem; }
+            .header-bottom { padding: 0 1.25rem; }
+            #main-container { padding: 1.25rem; }
+            .stat-grid { grid-template-columns: repeat(2,1fr); }
+        }
+        @@media (max-width: 575px) {
+            .stat-grid { grid-template-columns: 1fr; }
+            #main-container { padding: 1rem; }
+        }
+    </style>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+
+<!-- Header (Top Nav) -->
+<header id="header">
+    <div class="header-top">
+        <a class="header-brand" asp-area="" asp-controller="Home" asp-action="Index">
+            <div class="header-logo">
+                @if (!string.IsNullOrEmpty(settings.SiteLogoUrl))
+                {
+                    <img src="@settings.SiteLogoUrl" style="width:100%;height:100%;object-fit:cover;border-radius:10px;" />
+                }
+                else
+                {
+                    <i class="fa-solid @(string.IsNullOrEmpty(settings.SiteLogoIcon) ? "fa-car-side" : settings.SiteLogoIcon)"></i>
+                }
+            </div>
+            <div>
+                <div class="header-brand-title">@siteName</div>
+                <div class="header-brand-sub">Hệ thống quản trị</div>
+            </div>
+        </a>
+
+        <div class="header-controls">
+            <a href="/" target="_blank" class="header-icon-btn" title="Xem trang khách">
+                <i class="fa-solid fa-globe"></i>
+            </a>
+            <div class="dropdown">
+                <div class="header-user dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="list-style:none;">
+                    <div class="header-avatar">AD</div>
+                    <span class="header-user-name d-none d-md-inline">Admin</span>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end border-0 rounded-3 shadow-lg mt-2" style="min-width:180px; background:#121623; border: 1px solid var(--panel-border);">
+                    <li>
+                        <a class="dropdown-item py-2 small fw-semibold text-white" asp-area="Admin" asp-controller="Settings" asp-action="Index">
+                            <i class="fa-solid fa-sliders me-2 text-danger"></i>Cài đặt
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider opacity-25 my-1" style="background:#fff;"></li>
+                    <li>
+                        <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="dropdown-item py-2 small fw-semibold text-danger">
+                                <i class="fa-solid fa-right-from-bracket me-2"></i>Đăng xuất
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-bottom">
+        <ul class="nav-tabs-custom">
+            <li>
+                <a class="nav-tab-link @ActiveIf("/admin/dashboard")" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                    <i class="fa-solid fa-gauge-high"></i> Dashboard
+                </a>
+            </li>
+            <li>
+                <a class="nav-tab-link @ActiveIf("/admin/product")" asp-area="Admin" asp-controller="Product" asp-action="Index">
+                    <i class="fa-solid fa-car"></i> Garage Hệ Thống
+                </a>
+            </li>
+            <li>
+                <a class="nav-tab-link @ActiveIf("/admin/article")" asp-area="Admin" asp-controller="Article" asp-action="Index">
+                    <i class="fa-solid fa-newspaper"></i> Tạp Chí &amp; Tin Tức
+                </a>
+            </li>
+            <li>
+                <a class="nav-tab-link @ActiveIf("/admin/order")" asp-area="Admin" asp-controller="Order" asp-action="Index">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Hợp Đồng Đặt Cọc
+                </a>
+            </li>
+            <li>
+                <a class="nav-tab-link @ActiveIf("/admin/feedback")" asp-area="Admin" asp-controller="Feedback" asp-action="Index">
+                    <i class="fa-solid fa-comments"></i> Ý Kiến Khách Hàng
+                </a>
+            </li>
+            <li>
+                <a class="nav-tab-link @ActiveIf("/admin/staff")" asp-area="Admin" asp-controller="Staff" asp-action="Index">
+                    <i class="fa-solid fa-user-tie"></i> Đội Ngũ Chuyên Viên
+                </a>
+            </li>
+            <li>
+                <a class="nav-tab-link @ActiveIf("/admin/user")" asp-area="Admin" asp-controller="User" asp-action="Index">
+                    <i class="fa-solid fa-users"></i> Thành Viên VIP
+                </a>
+            </li>
+            <li>
+                <a class="nav-tab-link @ActiveIf("/admin/settings")" asp-area="Admin" asp-controller="Settings" asp-action="Index">
+                    <i class="fa-solid fa-sliders"></i> Cấu Hình Hệ Thống
+                </a>
+            </li>
+        </ul>
+    </div>
+</header>
+
+<!-- Main Container -->
+<main id="main-container">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close btn-close-white btn-close-sm" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+            <i class="fa-solid fa-circle-exclamation me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close btn-close-white btn-close-sm" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @RenderBody()
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+@Html.AntiForgeryToken()
+<script>
+// Table search utility
+function initTableSearch(inputId, tableId) {
+    const input = document.getElementById(inputId);
+    const table = document.getElementById(tableId);
+    if (!input || !table) return;
+    input.addEventListener('input', function () {
+        const q = this.value.toLowerCase();
+        table.querySelectorAll('tbody tr').forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+    });
+}
+</script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

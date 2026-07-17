@@ -1,0 +1,46 @@
+@model List<ProductViewModel>
+@{
+    ViewData["Title"] = "Kho xe";
+}
+
+<div style="background:var(--primary-color);padding:60px 0 40px;">
+    <div class="container text-center">
+        <span style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;color:var(--accent-color);">Showroom</span>
+        <h2 class="section-title mt-2" style="color:white;">Kho xe của chúng tôi</h2>
+        <p style="color:rgba(255,255,255,0.5);margin-top:0.5rem;">Chọn mẫu xe phù hợp với nhu cầu và ngân sách của bạn</p>
+        <div class="mt-4 d-flex justify-content-center">
+            <div class="input-group" style="max-width: 440px;">
+                <span class="input-group-text border-0 rounded-start-pill ps-4" style="background:rgba(255,255,255,0.1);"><i class="fa-solid fa-magnifying-glass" style="color:rgba(255,255,255,0.6);"></i></span>
+                <input type="text" id="product-search-input" class="form-control border-0 rounded-end-pill" placeholder="Tìm kiếm xe..." style="background:rgba(255,255,255,0.1);color:white;padding:0.85rem 1.5rem;" >
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="category-filters mb-5 d-flex justify-content-center flex-wrap gap-3">
+        <button class="btn btn-filter active" data-type="all">Tất cả</button>
+        <button class="btn btn-filter" data-type="Sedan">Sedan</button>
+        <button class="btn btn-filter" data-type="SUV">SUV</button>
+        <button class="btn btn-filter" data-type="MPV">MPV</button>
+        <button class="btn btn-filter" data-type="Hatchback">Hatchback</button>
+        <button class="btn btn-filter" data-type="Pickup">Pickup</button>
+        <button class="btn btn-filter" data-type="Crossover">Crossover</button>
+        <button class="btn btn-filter" data-type="Điện">Xe điện</button>
+    </div>
+    <div class="row g-4" id="product-grid">
+        @await Html.PartialAsync("_ProductGridPartial", Model)
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        window.productRoutes = {
+            filterByType: '@Url.Action("FilterByType", "Product")',
+            search: '@Url.Action("Search", "Product")'
+        };
+        document.getElementById('product-search-input').addEventListener('focus', function() {
+            this.style.color = 'white';
+        });
+    </script>
+}

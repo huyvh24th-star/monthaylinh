@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+}
+
+<div style="background:var(--primary-color);padding:60px 0 40px;">
+    <div class="container text-center">
+        <span style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;color:var(--accent-color);">Quản lý</span>
+        <h2 class="section-title mt-2" style="color:white;">Đơn đặt xe của tôi</h2>
+        <p style="color:rgba(255,255,255,0.5);margin-top:0.5rem;">Theo dõi trạng thái các đơn hàng bạn đã đặt</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div id="my-orders-content">
+        <div class="text-center py-5">
+            <div class="spinner-border" style="color:var(--accent-color);" role="status"></div>
+            <p class="mt-3 text-muted">Đang tải đơn hàng...</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    (function() {
+        const container = document.getElementById('my-orders-content');
+        const url = window.orderRoutes?.myOrdersPartial || '/Order/MyOrdersPartial';
+        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(r => r.text())
+            .then(html => { container.innerHTML = html; })
+            .catch(() => { container.innerHTML = '<p class="text-center text-muted">Không thể tải đơn hàng.</p>'; });
+    })();
+</script>
+}

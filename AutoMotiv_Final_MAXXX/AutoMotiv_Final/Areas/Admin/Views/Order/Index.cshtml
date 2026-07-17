@@ -1,0 +1,83 @@
+@model List<OrderAdminListViewModel>
+@{ ViewData["Title"] = "Đơn đặt xe"; }
+
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <div class="breadcrumb-simple"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a> / Đơn đặt xe</div>
+        <h1 class="page-title">Đơn đặt xe</h1>
+    </div>
+    <span class="badge-pill badge-info" style="font-size:.85rem;padding:.4em 1em;">@Model.Count đơn</span>
+</div>
+
+<div class="acard">
+    <div class="table-toolbar">
+        <div class="table-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="searchInput" type="text" placeholder="Tìm đơn, khách hàng...">
+        </div>
+        <div class="d-flex gap-2">
+            <span class="badge-pill badge-warning">@Model.Count(o => o.Status == "Đang xử lý") chờ xử lý</span>
+        </div>
+    </div>
+    <div class="atable-wrap">
+        <table class="atable" id="mainTable">
+            <thead>
+                <tr>
+                    <th>Đơn #</th>
+                    <th>Khách hàng</th>
+                    <th>Ngày đặt</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th style="width:100px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-inbox"></i><p>Chưa có đơn hàng nào</p></div></td></tr>
+                }
+                @foreach (var o in Model)
+                {
+                    var bc = o.Status switch {
+                        "Đang xử lý" => "badge-warning",
+                        "Đang giao"  => "badge-info",
+                        "Đã giao"    => "badge-success",
+                        "Đã hủy"     => "badge-danger",
+                        _            => "badge-gray"
+                    };
+                    <tr>
+                        <td><span class="fw-bold" style="font-size:.85rem;">#@o.Id</span></td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="av" style="background:var(--ap);font-size:.65rem;">
+                                    @((o.CustomerUsername ?? "K").Substring(0,1).ToUpper())
+                                </div>
+                                <span style="font-size:.85rem;">@(o.CustomerUsername ?? "Khách")</span>
+                            </div>
+                        </td>
+                        <td><span style="font-size:.78rem;color:#6b7280;">@o.OrderDate.ToString("dd/MM/yyyy HH:mm")</span></td>
+                        <td><span class="fw-bold" style="color:var(--ap);font-size:.85rem;">@o.FormattedTotal</span></td>
+                        <td><span class="badge-pill @bc">@o.Status</span></td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a asp-area="Admin" asp-controller="Order" asp-action="Detail" asp-route-id="@o.Id"
+                                   class="act-btn act-btn-view" title="Chi tiết"><i class="fa-solid fa-eye"></i></a>
+                                <a asp-area="Admin" asp-controller="Order" asp-action="UpdateStatus" asp-route-id="@o.Id"
+                                   class="act-btn act-btn-edit" title="Cập nhật"><i class="fa-solid fa-pen"></i></a>
+                                <form asp-area="Admin" asp-controller="Order" asp-action="Delete" asp-route-id="@o.Id"
+                                      method="post" onsubmit="return confirm('Xóa đơn hàng #@o.Id?')" style="display:contents;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="act-btn act-btn-del" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>initTableSearch('searchInput','mainTable');</script>
+}

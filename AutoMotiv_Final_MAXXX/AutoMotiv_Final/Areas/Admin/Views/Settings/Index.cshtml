@@ -1,0 +1,456 @@
+@model Web.Models.SiteSettings
+@{
+    ViewData["Title"] = "Cài đặt Website";
+}
+
+<style>
+.settings-section {
+    background: var(--panel-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+}
+.settings-section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--panel-border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.theme-card {
+    border: 1.5px solid var(--panel-border);
+    background: rgba(255,255,255,0.02);
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    position: relative;
+    color: var(--text-main);
+}
+.theme-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.15); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.theme-card.selected { border-color: var(--ap); box-shadow: var(--glow); }
+.theme-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--ap-gradient);
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    box-shadow: var(--glow);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.theme-swatch {
+    height: 40px;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+.theme-name { font-size: 0.8rem; font-weight: 600; }
+.logo-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    background: var(--ap-gradient);
+    box-shadow: var(--glow);
+}
+.color-input-group { display: flex; align-items: center; gap: 0.75rem; }
+.color-input-group input[type=color] {
+    width: 48px;
+    height: 38px;
+    border: 1px solid var(--panel-border);
+    background: transparent;
+    border-radius: 8px;
+    padding: 2px;
+    cursor: pointer;
+}
+.section-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+.section-tab {
+    padding: 0.55rem 1.15rem;
+    border-radius: 20px;
+    border: 1px solid var(--panel-border);
+    background: rgba(255,255,255,0.03);
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-mute);
+}
+.section-tab:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.1); }
+.section-tab.active { background: var(--ap-gradient); color: white; border-color: transparent; box-shadow: var(--glow); }
+.settings-panel { display: none; }
+.settings-panel.active { display: block; }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1" style="font-size:1.6rem;">⚙️ Cài đặt Website</h2>
+        <p class="text-muted mb-0 small">Tùy chỉnh giao diện, thông tin và thương hiệu của cửa hàng</p>
+    </div>
+</div>
+
+<!-- Section Tabs -->
+<div class="section-tabs">
+    <button class="section-tab active" onclick="switchTab('branding')">🎨 Thương hiệu</button>
+    <button class="section-tab" onclick="switchTab('theme')">🖌️ Giao diện</button>
+    <button class="section-tab" onclick="switchTab('contact')">📍 Liên hệ</button>
+    <button class="section-tab" onclick="switchTab('social')">📱 Mạng xã hội</button>
+    <button class="section-tab" onclick="switchTab('advanced')">🔧 Nâng cao</button>
+</div>
+
+<form asp-action="Index" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <!-- ===== BRANDING PANEL ===== -->
+    <div id="panel-branding" class="settings-panel active">
+        <div class="settings-section">
+            <div class="settings-section-title">
+                <i class="fa-solid fa-store text-primary"></i> Thông tin thương hiệu
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Tên website</label>
+                    <input asp-for="SiteName" class="form-control" placeholder="Cake Tea" />
+                    <small class="text-muted">Hiển thị trên navbar và tab trình duyệt</small>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Tagline / Slogan</label>
+                    <input asp-for="SiteTagline" class="form-control" placeholder="Tinh tế từng miếng bánh..." />
+                    <small class="text-muted">Câu khẩu hiệu hiển thị trên trang chủ</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-section-title">
+                <i class="fa-solid fa-image text-warning"></i> Logo website
+            </div>
+            <div class="row g-4 align-items-start">
+                <div class="col-md-3 text-center">
+                    <p class="fw-semibold mb-2">Logo hiện tại</p>
+                    <div class="d-flex justify-content-center mb-3">
+                        @if (!string.IsNullOrEmpty(Model.SiteLogoUrl))
+                        {
+                            <img src="@Model.SiteLogoUrl" alt="Logo" style="width:80px;height:80px;object-fit:contain;border-radius:16px;border:2px solid #eee;" />
+                        }
+                        else
+                        {
+                            <div class="logo-preview">
+                                <i class="fa-solid @(string.IsNullOrEmpty(Model.SiteLogoIcon) ? "fa-car-side" : Model.SiteLogoIcon)"></i>
+                            </div>
+                        }
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.SiteLogoUrl))
+                    {
+                        @* BUGFIX: Form reset logo nằm NGOÀI form chính - dùng JS để submit *@
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="submitResetLogo()">
+                            <i class="fa-solid fa-rotate-left me-1"></i> Reset về mặc định
+                        </button>
+                    }
+                </div>
+                <div class="col-md-9">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Upload logo mới</label>
+                        <input type="file" name="logoFile" accept="image/*" class="form-control" id="logoFileInput" onchange="previewLogo(this)" />
+                        <small class="text-muted">PNG, JPG, WebP. Kích thước khuyến nghị: 200×200px</small>
+                    </div>
+                    <div id="logo-preview-new" class="d-none">
+                        <p class="fw-semibold mb-2">Xem trước logo mới:</p>
+                        <img id="logo-preview-img" src="#" alt="preview" style="width:80px;height:80px;object-fit:contain;border-radius:16px;border:2px solid #eee;" />
+                    </div>
+                    <hr/>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Hoặc chọn icon Font Awesome</label>
+                        <div class="d-flex gap-2 flex-wrap">
+                            @foreach (var icon in new[] {
+                                ("fa-car-side","Xe hơi"), ("fa-car","Sedan"), ("fa-truck-monster","SUV"),
+                                ("fa-star","Ngôi sao"), ("fa-heart","Trái tim"), ("fa-leaf","Lá"),
+                                ("fa-coffee","Cà phê"), ("fa-store","Cửa hàng"), ("fa-crown","Vương miện")
+                            })
+                            {
+                                <div class="theme-card @(Model.SiteLogoIcon == icon.Item1 ? "selected" : "")"
+                                     style="width:70px;"
+                                     onclick="selectIcon('@icon.Item1', this)">
+                                    <i class="fa-solid @icon.Item1 fa-lg mb-1"></i>
+                                    <div style="font-size:0.65rem;color:var(--text-mute);">@icon.Item2</div>
+                                </div>
+                            }
+                        </div>
+                        <input type="hidden" asp-for="SiteLogoIcon" id="logoIconInput" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== THEME PANEL ===== -->
+    <div id="panel-theme" class="settings-panel">
+        <div class="settings-section">
+            <div class="settings-section-title">
+                <i class="fa-solid fa-palette text-info"></i> Chủ đề màu sắc
+            </div>
+            <p class="text-muted small mb-3">Chọn bộ màu có sẵn hoặc tùy chỉnh theo ý bạn</p>
+
+            <div class="row g-3 mb-4">
+                @{
+                    var themes = new[]
+                    {
+                        ("caramel", "#8b5e3c", "#d97706", "#fdfbf7", "Caramel ☕"),
+                        ("rose", "#c2185b", "#e91e63", "#fff5f7", "Hồng Rose 🌸"),
+                        ("matcha", "#388e3c", "#66bb6a", "#f1f8f1", "Matcha 🍵"),
+                        ("ocean", "#1565c0", "#1e88e5", "#f0f7ff", "Ocean Blue 🌊"),
+                        ("violet", "#6a1b9a", "#9c27b0", "#faf5ff", "Tím Violet 💜"),
+                        ("midnight", "#212121", "#424242", "#f5f5f5", "Midnight 🌙"),
+                    };
+                }
+                @foreach (var (key, primary, accent, bg, name) in themes)
+                {
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <div class="theme-card @(Model.ThemePreset == key ? "selected" : "")"
+                             onclick="selectTheme('@key','@primary','@accent','@bg',this)">
+                            <div class="theme-swatch"
+                                 style="background: linear-gradient(135deg, @primary 50%, @accent 50%);"></div>
+                            <div class="theme-name">@name</div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <input type="hidden" asp-for="ThemePreset" id="themePresetInput" />
+
+            <hr/>
+            <p class="fw-semibold mb-3">🎨 Tùy chỉnh màu sắc riêng</p>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Màu chủ đạo</label>
+                    <div class="color-input-group">
+                        <input type="color" id="primaryColorPicker" value="@Model.PrimaryColor"
+                               oninput="syncColor('primaryColorPicker','primaryColorText')" />
+                        <input asp-for="PrimaryColor" id="primaryColorText" class="form-control"
+                               oninput="syncColorPicker('primaryColorText','primaryColorPicker')" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Màu nhấn (accent)</label>
+                    <div class="color-input-group">
+                        <input type="color" id="accentColorPicker" value="@Model.AccentColor"
+                               oninput="syncColor('accentColorPicker','accentColorText')" />
+                        <input asp-for="AccentColor" id="accentColorText" class="form-control"
+                               oninput="syncColorPicker('accentColorText','accentColorPicker')" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Màu nền</label>
+                    <div class="color-input-group">
+                        <input type="color" id="bgColorPicker" value="@Model.BgWarm"
+                               oninput="syncColor('bgColorPicker','bgColorText')" />
+                        <input asp-for="BgWarm" id="bgColorText" class="form-control"
+                               oninput="syncColorPicker('bgColorText','bgColorPicker')" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="livePreview()">
+                    <i class="fa-solid fa-eye me-1"></i> Xem trước màu
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CONTACT PANEL ===== -->
+    <div id="panel-contact" class="settings-panel">
+        <div class="settings-section">
+            <div class="settings-section-title">
+                <i class="fa-solid fa-location-dot text-danger"></i> Thông tin liên hệ (Footer)
+            </div>
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <label class="form-label fw-semibold">Địa chỉ</label>
+                    <input asp-for="FooterAddress" class="form-control" placeholder="123 Đường ABC, Quận 1, TP.HCM" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Số điện thoại</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
+                        <input asp-for="FooterPhone" class="form-control" placeholder="(028) 1234 5678" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Email</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                        <input asp-for="FooterEmail" class="form-control" placeholder="info@automotiv.vn" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SOCIAL PANEL ===== -->
+    <div id="panel-social" class="settings-panel">
+        <div class="settings-section">
+            <div class="settings-section-title">
+                <i class="fa-solid fa-share-nodes text-primary"></i> Liên kết mạng xã hội
+            </div>
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <label class="form-label fw-semibold"><i class="fa-brands fa-facebook text-primary me-2"></i>Facebook</label>
+                    <input asp-for="SocialFacebook" class="form-control" placeholder="https://facebook.com/automotiv" />
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label fw-semibold"><i class="fa-brands fa-instagram text-danger me-2"></i>Instagram</label>
+                    <input asp-for="SocialInstagram" class="form-control" placeholder="https://instagram.com/automotiv" />
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label fw-semibold"><i class="fa-brands fa-tiktok me-2"></i>TikTok</label>
+                    <input asp-for="SocialTiktok" class="form-control" placeholder="https://tiktok.com/@@automotiv" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ADVANCED PANEL ===== -->
+    <div id="panel-advanced" class="settings-panel">
+        <div class="settings-section">
+            <div class="settings-section-title">
+                <i class="fa-solid fa-wrench text-secondary"></i> Cài đặt nâng cao
+            </div>
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="form-check form-switch p-3" style="background:rgba(217,119,6,0.05);border-radius:0.75rem;border:1px solid rgba(217,119,6,0.25);">
+                        <input class="form-check-input" type="checkbox" asp-for="MaintenanceMode" id="maintenanceSwitch" style="width:3em;height:1.5em;">
+                        <label class="form-check-label ms-2" for="maintenanceSwitch">
+                            <span class="fw-bold">🔧 Chế độ bảo trì</span>
+                            <br><small class="text-muted">Khi bật, người dùng sẽ thấy thông báo "đang bảo trì" thay vì nội dung trang</small>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="p-3" style="background:rgba(255,255,255,0.02);border-radius:0.75rem;border:1px dashed var(--panel-border);">
+                        <p class="fw-bold mb-1">📊 Thông tin hệ thống</p>
+                        <small class="text-muted">
+                            Cài đặt cập nhật lần cuối: <strong>@Model.LastUpdated.ToString("dd/MM/yyyy HH:mm")</strong>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Button -->
+    <div class="d-flex justify-content-end gap-3 mt-2">
+        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-secondary px-4">
+            Hủy
+        </a>
+        <button type="submit" class="btn btn-primary px-5 fw-bold">
+            <i class="fa-solid fa-floppy-disk me-2"></i> Lưu cài đặt
+        </button>
+    </div>
+</form>
+
+@* BUGFIX: Form ResetLogo phải đặt NGOÀI form chính - HTML không cho lồng form *@
+<form id="resetLogoForm" asp-action="ResetLogo" method="post" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+<script>
+// Tab switching
+function switchTab(tab) {
+    document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + tab).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// Icon selection - BUGFIX: chỉ reset selected trong vùng icon-picker, không ảnh hưởng theme cards
+function selectIcon(icon, el) {
+    // Chỉ xóa selected từ các card trong icon-picker, không ảnh hưởng đến theme cards
+    const iconPicker = el.closest('.d-flex.gap-2.flex-wrap');
+    if (iconPicker) {
+        iconPicker.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected'));
+    }
+    el.classList.add('selected');
+    document.getElementById('logoIconInput').value = icon;
+}
+
+// BUGFIX: Hàm submit form ResetLogo (tách biệt khỏi form chính)
+function submitResetLogo() {
+    if (confirm('Đặt lại logo về mặc định (icon)?')) {
+        document.getElementById('resetLogoForm').submit();
+    }
+}
+
+// Theme preset selection
+function selectTheme(key, primary, accent, bg, el) {
+    document.getElementById('themePresetInput').value = key;
+    document.getElementById('primaryColorText').value = primary;
+    document.getElementById('primaryColorPicker').value = primary;
+    document.getElementById('accentColorText').value = accent;
+    document.getElementById('accentColorPicker').value = accent;
+    document.getElementById('bgColorText').value = bg;
+    document.getElementById('bgColorPicker').value = bg;
+
+    // Update selected state
+    document.querySelectorAll('#panel-theme .theme-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    livePreview();
+}
+
+function syncColor(pickerId, textId) {
+    document.getElementById(textId).value = document.getElementById(pickerId).value;
+}
+
+function syncColorPicker(textId, pickerId) {
+    const val = document.getElementById(textId).value;
+    if (/^#[0-9A-Fa-f]{6}$/.test(val))
+        document.getElementById(pickerId).value = val;
+}
+
+function livePreview() {
+    const primary = document.getElementById('primaryColorText').value;
+    const accent = document.getElementById('accentColorText').value;
+    const bg = document.getElementById('bgColorText').value;
+    document.documentElement.style.setProperty('--primary-color', primary);
+    document.documentElement.style.setProperty('--accent-color', accent);
+    document.documentElement.style.setProperty('--bg-warm', bg);
+}
+
+// Logo file preview
+function previewLogo(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('logo-preview-img').src = e.target.result;
+            document.getElementById('logo-preview-new').classList.remove('d-none');
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+}

@@ -1,0 +1,116 @@
+@model Web.Models.ContactViewModel
+@{
+    ViewData["Title"] = "Liên hệ & Tư vấn";
+}
+
+<div style="background:var(--primary-color);padding:60px 0 40px;">
+    <div class="container text-center">
+        <span style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;color:var(--accent-color);">Hỗ trợ khách hàng</span>
+        <h2 class="section-title mt-2" style="color:white;">Liên hệ & Tư vấn</h2>
+        <p style="color:rgba(255,255,255,0.5);margin-top:0.5rem;">Đội ngũ chuyên viên luôn sẵn sàng hỗ trợ bạn 24/7</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-5">
+        <div class="col-lg-5">
+            <h3 class="fw-bold mb-4" style="text-transform:uppercase;letter-spacing:0.02em;">Thông tin showroom</h3>
+            <div class="d-flex flex-column gap-4">
+                <div class="d-flex gap-3 align-items-start">
+                    <div style="width:48px;height:48px;background:var(--accent-color);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fa-solid fa-location-dot text-white"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold mb-1">Địa chỉ showroom</div>
+                        <div class="text-muted small">123 Đường Nguyễn Văn Linh, Quận 7, TP.HCM</div>
+                    </div>
+                </div>
+                <div class="d-flex gap-3 align-items-start">
+                    <div style="width:48px;height:48px;background:var(--accent-color);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fa-solid fa-phone text-white"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold mb-1">Hotline tư vấn</div>
+                        <div class="text-muted small">1800 1234 (Miễn phí · 8:00–18:00)</div>
+                    </div>
+                </div>
+                <div class="d-flex gap-3 align-items-start">
+                    <div style="width:48px;height:48px;background:var(--accent-color);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fa-solid fa-clock text-white"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold mb-1">Giờ làm việc</div>
+                        <div class="text-muted small">Thứ 2 – Chủ nhật: 8:00 – 18:00</div>
+                    </div>
+                </div>
+            </div>
+
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <div class="mt-5" id="feedback-history-section">
+                    <h5 class="fw-bold mb-3">Lịch sử phản hồi</h5>
+                    <div id="feedback-history-content">
+                        <div class="text-center py-3"><div class="spinner-border spinner-border-sm" style="color:var(--accent-color);" role="status"></div></div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-7">
+            <div class="auth-card p-4 p-md-5">
+                <h3 class="fw-bold mb-2" style="text-transform:uppercase;font-size:1.5rem;">Gửi yêu cầu tư vấn</h3>
+                <p class="text-muted small mb-4">Điền thông tin bên dưới, chuyên viên sẽ liên hệ với bạn trong vòng 30 phút.</p>
+
+                <form asp-controller="Feedback" asp-action="Contact" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label small fw-bold text-muted text-uppercase" style="font-size:0.72rem;letter-spacing:0.08em;"></label>
+                        <input asp-for="Name" class="form-control auth-input" placeholder="Họ và tên của bạn">
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label small fw-bold text-muted text-uppercase" style="font-size:0.72rem;letter-spacing:0.08em;"></label>
+                        <input asp-for="Email" class="form-control auth-input" placeholder="email@example.com">
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Phone" class="form-label small fw-bold text-muted text-uppercase" style="font-size:0.72rem;letter-spacing:0.08em;"></label>
+                        <input asp-for="Phone" class="form-control auth-input" placeholder="Số điện thoại liên hệ">
+                        <span asp-validation-for="Phone" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-4">
+                        <label asp-for="Message" class="form-label small fw-bold text-muted text-uppercase" style="font-size:0.72rem;letter-spacing:0.08em;">Nội dung / Mẫu xe quan tâm</label>
+                        <textarea asp-for="Message" class="form-control auth-input" rows="4" placeholder="Ví dụ: Tôi muốn tư vấn về Toyota Camry 2024, hỏi về chính sách trả góp..."></textarea>
+                        <span asp-validation-for="Message" class="text-danger small"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold" style="text-transform:uppercase;letter-spacing:0.08em;">
+                        <i class="fa-solid fa-paper-plane me-2"></i>Gửi yêu cầu tư vấn
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <script>
+            fetch('/Feedback/MyFeedbackPartial', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(r => r.text())
+                .then(html => { document.getElementById('feedback-history-content').innerHTML = html; })
+                .catch(() => { document.getElementById('feedback-history-content').innerHTML = ''; });
+        </script>
+    }
+}

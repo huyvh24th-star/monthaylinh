@@ -1,0 +1,114 @@
+@model ProductViewModel
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div style="background:var(--primary-color);padding:40px 0 30px;">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0" style="font-size:0.85rem;">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" style="color:rgba(255,255,255,0.5);text-decoration:none;">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Product" asp-action="Index" style="color:rgba(255,255,255,0.5);text-decoration:none;">Kho xe</a></li>
+                <li class="breadcrumb-item active" style="color:white;">@Model.Name</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-5">
+        <div class="col-lg-7">
+            <div class="product-img-wrapper rounded-3 overflow-hidden" style="height: 420px;border-radius:1rem!important;">
+                <img src="@(Model.Image ?? "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=1200&auto=format&fit=crop")" class="product-img" alt="@Model.Name">
+            </div>
+            <!-- Specs Bar -->
+            <div class="row g-3 mt-3">
+                <div class="col-3">
+                    <div class="text-center p-3 rounded-3 bg-white border">
+                        <i class="fa-solid fa-gas-pump text-danger mb-2 d-block fs-5"></i>
+                        <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);">Nhiên liệu</div>
+                        <div style="font-size:0.85rem;font-weight:700;margin-top:2px;">Xăng</div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="text-center p-3 rounded-3 bg-white border">
+                        <i class="fa-solid fa-gear text-danger mb-2 d-block fs-5"></i>
+                        <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);">Hộp số</div>
+                        <div style="font-size:0.85rem;font-weight:700;margin-top:2px;">Tự động</div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="text-center p-3 rounded-3 bg-white border">
+                        <i class="fa-solid fa-calendar text-danger mb-2 d-block fs-5"></i>
+                        <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);">Năm SX</div>
+                        <div style="font-size:0.85rem;font-weight:700;margin-top:2px;">2024</div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="text-center p-3 rounded-3 bg-white border">
+                        <i class="fa-solid fa-users text-danger mb-2 d-block fs-5"></i>
+                        <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);">Chỗ ngồi</div>
+                        <div style="font-size:0.85rem;font-weight:700;margin-top:2px;">5 chỗ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <span class="product-badge mb-3 d-inline-block" style="position:relative;top:auto;left:auto;border-radius:4px;">@Model.Type</span>
+            <h1 class="section-title mb-3" style="font-size:2.25rem;">@Model.Name</h1>
+            <p class="text-muted mb-4" style="line-height:1.8;">@(Model.Description ?? "Liên hệ showroom để được tư vấn chi tiết về mẫu xe này.")</p>
+
+            <div class="p-4 rounded-3 mb-4" style="background:#fff5f5;border:2px solid rgba(230,57,70,0.15);">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Giá bán</div>
+                        <span class="product-price" style="font-size:2rem;">@Model.FormattedPrice</span>
+                    </div>
+                    @if (Model.Stock > 0)
+                    {
+                        <div class="text-end">
+                            <span class="badge rounded-pill px-3 py-2" style="background:#dcfce7;color:#16a34a;font-weight:700;">
+                                <i class="fa-solid fa-check-circle me-1"></i>Còn hàng (@Model.Stock xe)
+                            </span>
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="badge rounded-pill px-3 py-2 bg-danger">Đã bán hết</span>
+                    }
+                </div>
+            </div>
+
+            <div class="d-grid gap-3">
+                <button class="btn btn-primary btn-lg rounded-pill py-3 shadow-lg add-to-cart-btn"
+                        data-product-id="@Model.Id"
+                        data-product-name="@Model.Name"
+                        data-product-price="@Model.Price"
+                        data-product-image="@(Model.Image ?? "")"
+                        @(Model.Stock <= 0 ? "disabled" : "")
+                        style="font-weight:800;letter-spacing:0.08em;text-transform:uppercase;">
+                    <i class="fa-solid fa-cart-plus me-2"></i>Đặt mua ngay
+                </button>
+                <a asp-controller="Feedback" asp-action="Contact" class="btn btn-outline-secondary rounded-pill py-3"
+                   style="font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">
+                    <i class="fa-solid fa-phone me-2"></i>Tư vấn & Lái thử
+                </a>
+            </div>
+
+            <div class="mt-4 p-3 rounded-3" style="background:var(--bg-warm);border:1px solid var(--border-warm);">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="fa-solid fa-shield-check text-success"></i>
+                    <span style="font-size:0.85rem;font-weight:600;">Bảo hành chính hãng 3 năm</span>
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="fa-solid fa-file-contract text-primary"></i>
+                    <span style="font-size:0.85rem;font-weight:600;">Hỗ trợ vay vốn ngân hàng lên đến 80%</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-truck text-warning"></i>
+                    <span style="font-size:0.85rem;font-weight:600;">Giao xe tận nơi toàn quốc</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

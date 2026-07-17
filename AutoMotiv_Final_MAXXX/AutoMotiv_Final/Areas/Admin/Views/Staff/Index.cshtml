@@ -1,0 +1,82 @@
+@model List<StaffAdminListViewModel>
+@{ ViewData["Title"] = "Nhân viên"; }
+
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <div class="breadcrumb-simple"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a> / Nhân viên</div>
+        <h1 class="page-title">Nhân viên</h1>
+    </div>
+    <a asp-area="Admin" asp-controller="Staff" asp-action="Create" class="btn btn-primary px-4">
+        <i class="fa-solid fa-plus me-2"></i>Thêm nhân viên
+    </a>
+</div>
+
+<div class="acard">
+    <div class="table-toolbar">
+        <div class="table-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="searchInput" type="text" placeholder="Tìm nhân viên, chức vụ...">
+        </div>
+        <span class="text-muted" style="font-size:.78rem;">@Model.Count nhân viên</span>
+    </div>
+    <div class="atable-wrap">
+        <table class="atable" id="mainTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nhân viên</th>
+                    <th>Chức vụ</th>
+                    <th>Ca làm việc</th>
+                    <th>Lương</th>
+                    <th>Ngày tạo</th>
+                    <th style="width:70px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7"><div class="empty-state"><i class="fa-solid fa-user-tie"></i><p>Chưa có nhân viên nào</p></div></td></tr>
+                }
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold text-muted" style="font-size:.78rem;">@s.Id</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="av" style="background:#6366f1;font-size:.65rem;">
+                                    @s.Name.Substring(0,1).ToUpper()
+                                </div>
+                                <span style="font-size:.875rem;font-weight:600;">@s.Name</span>
+                            </div>
+                        </td>
+                        <td>@(s.Position ?? "—")</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(s.Shift))
+                            {
+                                <span class="badge-pill badge-info">@s.Shift</span>
+                            }
+                            else { <span style="color:#9ca3af;">—</span> }
+                        </td>
+                        <td><span class="fw-semibold" style="color:var(--ap);">@s.Salary.ToString("#,##0")đ</span></td>
+                        <td><span style="font-size:.78rem;color:#9ca3af;">@s.CreatedDate.ToString("dd/MM/yyyy")</span></td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a asp-area="Admin" asp-controller="Staff" asp-action="Edit" asp-route-id="@s.Id"
+                                   class="act-btn act-btn-edit" title="Sửa"><i class="fa-solid fa-pen"></i></a>
+                                <form asp-area="Admin" asp-controller="Staff" asp-action="Delete" asp-route-id="@s.Id"
+                                      method="post" onsubmit="return confirm('Xóa nhân viên @s.Name?')" style="display:contents;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="act-btn act-btn-del" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>initTableSearch('searchInput','mainTable');</script>
+}

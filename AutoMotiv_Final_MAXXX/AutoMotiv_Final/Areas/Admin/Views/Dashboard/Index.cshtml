@@ -1,0 +1,200 @@
+@model DashboardViewModel
+@{ ViewData["Title"] = "Dashboard"; }
+
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <div>
+        <div class="breadcrumb-simple">Hệ thống quản trị</div>
+        <h1 class="page-title">Dashboard điều hành</h1>
+        <p class="page-sub">@DateTime.Now.ToString("dddd, dd MMMM yyyy", new System.Globalization.CultureInfo("vi-VN"))</p>
+    </div>
+    <a asp-area="Admin" asp-controller="Product" asp-action="Create" class="btn btn-primary px-4">
+        <i class="fa-solid fa-plus me-2"></i>Thêm xe vào Garage
+    </a>
+</div>
+
+<!-- Bento Grid 3 Cột -->
+<div class="row g-4">
+    
+    <!-- CỘT 1: CHỈ SỐ TỔNG HỢP & PHÍM TẮT -->
+    <div class="col-xl-4 col-lg-12 d-flex flex-column gap-4">
+        
+        <!-- Các chỉ số nhỏ dạng ngang ghép thành Bento -->
+        <div class="d-flex flex-column gap-3">
+            <div class="stat-card revenue py-3 px-4 d-flex align-items-center gap-3">
+                <div class="stat-icon m-0" style="background:rgba(217,119,6,0.1);color:#fbbf24;border-color:rgba(217,119,6,0.2); width:40px; height:40px;"><i class="fa-solid fa-coins" style="font-size:0.9rem;"></i></div>
+                <div>
+                    <div class="stat-label" style="font-size:0.68rem;">Tổng doanh thu</div>
+                    <div class="stat-value m-0" style="font-size:1.3rem;">@(Model.TotalRevenue.ToString("#,##0"))đ</div>
+                </div>
+            </div>
+            
+            <div class="stat-card orders py-3 px-4 d-flex align-items-center gap-3">
+                <div class="stat-icon m-0" style="background:rgba(37,99,235,0.1);color:#60a5fa;border-color:rgba(37,99,235,0.2); width:40px; height:40px;"><i class="fa-solid fa-file-invoice-dollar" style="font-size:0.9rem;"></i></div>
+                <div>
+                    <div class="stat-label" style="font-size:0.68rem;">Hợp đồng đặt cọc</div>
+                    <div class="stat-value m-0" style="font-size:1.3rem;">@Model.TotalOrders <span style="font-size:0.8rem; font-weight:500; color:var(--text-mute);">(@Model.PendingOrders chờ duyệt)</span></div>
+                </div>
+            </div>
+
+            <div class="stat-card customers py-3 px-4 d-flex align-items-center gap-3">
+                <div class="stat-icon m-0" style="background:rgba(5,150,105,0.1);color:#34d399;border-color:rgba(5,150,105,0.2); width:40px; height:40px;"><i class="fa-solid fa-users" style="font-size:0.9rem;"></i></div>
+                <div>
+                    <div class="stat-label" style="font-size:0.68rem;">Thành viên VIP</div>
+                    <div class="stat-value m-0" style="font-size:1.3rem;">@Model.TotalCustomers</div>
+                </div>
+            </div>
+
+            <div class="stat-card products py-3 px-4 d-flex align-items-center gap-3">
+                <div class="stat-icon m-0" style="background:rgba(124,58,237,0.1);color:#a78bfa;border-color:rgba(124,58,237,0.2); width:40px; height:40px;"><i class="fa-solid fa-car" style="font-size:0.9rem;"></i></div>
+                <div>
+                    <div class="stat-label" style="font-size:0.68rem;">Garage Hệ Thống</div>
+                    <div class="stat-value m-0" style="font-size:1.3rem;">@Model.TotalProducts <span style="font-size:0.8rem; font-weight:500; color:var(--text-mute);">Mẫu xe</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phím tắt nghiệp vụ -->
+        <div class="acard">
+            <div class="acard-header">
+                <span class="acard-title"><i class="fa-solid fa-bolt me-2" style="color:#fbbf24;"></i>Nghiệp vụ nhanh</span>
+            </div>
+            <div class="acard-body d-flex flex-column gap-2" style="padding: 1.25rem;">
+                <a asp-area="Admin" asp-controller="Product" asp-action="Create"
+                   class="d-flex align-items-center gap-3 p-2.5 px-3 rounded-3 text-decoration-none"
+                   style="background:rgba(217,119,6,0.04); border: 1px solid rgba(217,119,6,0.12); transition:all .25s ease;" onmouseover="this.style.background='rgba(217,119,6,0.1)';" onmouseout="this.style.background='rgba(217,119,6,0.04)';">
+                    <div style="width:30px;height:30px;border-radius:8px;background:rgba(217,119,6,0.15);color:#fbbf24;display:flex;align-items:center;justify-content:center;font-size:0.85rem;">
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+                    <span style="font-size:.85rem;font-weight:600;color:#fff;">Nhập xe mới</span>
+                </a>
+                <a asp-area="Admin" asp-controller="Article" asp-action="Create"
+                   class="d-flex align-items-center gap-3 p-2.5 px-3 rounded-3 text-decoration-none"
+                   style="background:rgba(124,58,237,0.04); border: 1px solid rgba(124,58,237,0.12); transition:all .25s ease;" onmouseover="this.style.background='rgba(124,58,237,0.1)';" onmouseout="this.style.background='rgba(124,58,237,0.04)';">
+                    <div style="width:30px;height:30px;border-radius:8px;background:rgba(124,58,237,0.15);color:#a78bfa;display:flex;align-items:center;justify-content:center;font-size:0.85rem;">
+                        <i class="fa-solid fa-newspaper"></i>
+                    </div>
+                    <span style="font-size:.85rem;font-weight:600;color:#fff;">Viết bài tin tức</span>
+                </a>
+                <a asp-area="Admin" asp-controller="Order" asp-action="Index"
+                   class="d-flex align-items-center gap-3 p-2.5 px-3 rounded-3 text-decoration-none"
+                   style="background:rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.12); transition:all .25s ease;" onmouseover="this.style.background='rgba(239,68,68,0.1)';" onmouseout="this.style.background='rgba(239,68,68,0.04)';">
+                    <div style="width:30px;height:30px;border-radius:8px;background:rgba(239,68,68,0.15);color:#f87171;display:flex;align-items:center;justify-content:center;font-size:0.85rem;">
+                        <i class="fa-solid fa-file-signature"></i>
+                    </div>
+                    <span style="font-size:.85rem;font-weight:600;color:#fff;">Xét duyệt cọc</span>
+                    @if (Model.PendingOrders > 0)
+                    {
+                        <span class="sb-badge ms-auto" style="padding:0.15em 0.5em;">@Model.PendingOrders</span>
+                    }
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- CỘT 2: PHÂN TÍCH HỢP ĐỒNG (BIỂU ĐỒ) -->
+    <div class="col-xl-4 col-lg-6">
+        <div class="acard h-100">
+            <div class="acard-header">
+                <span class="acard-title"><i class="fa-solid fa-chart-line me-2" style="color:var(--ap);"></i>Trạng thái giao dịch</span>
+            </div>
+            <div class="acard-body d-flex flex-column justify-content-between" style="min-height: 320px;">
+                <div style="position: relative; height:220px; width:100%;">
+                    <canvas id="orderChart"></canvas>
+                </div>
+                <div class="p-3 rounded-3 mt-3" style="background:rgba(255,255,255,0.02); border: 1px solid var(--panel-border);">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small text-muted">Ý kiến phản hồi chưa đọc:</span>
+                        <span class="badge bg-danger rounded-pill">@Model.UnrepliedFeedbacks</span>
+                    </div>
+                    <a asp-area="Admin" asp-controller="Feedback" asp-action="Index" class="small fw-bold text-decoration-none" style="color:var(--ap);">
+                        Đi đến phản hồi <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CỘT 3: YÊU CẦU ĐẶT CỌC MỚI -->
+    <div class="col-xl-4 col-lg-6">
+        <div class="acard h-100">
+            <div class="acard-header">
+                <span class="acard-title"><i class="fa-solid fa-file-contract me-2" style="color:var(--text-mute);"></i>Yêu cầu đặt cọc mới</span>
+                <a asp-area="Admin" asp-controller="Order" asp-action="Index"
+                   class="btn btn-sm btn-outline-secondary px-3 py-1.5" style="font-size:.78rem;">
+                    Xem tất cả
+                </a>
+            </div>
+            <div class="acard-body p-0">
+                <div class="list-group list-group-flush" style="background:transparent;">
+                    @if (!Model.RecentOrders.Any())
+                    {
+                        <div class="empty-state py-5"><i class="fa-solid fa-inbox"></i><p>Không có yêu cầu cọc mới</p></div>
+                    }
+                    @foreach (var o in Model.RecentOrders.Take(4))
+                    {
+                        var statusBadge = o.Status switch {
+                            "Đang xử lý" => "badge-warning",
+                            "Đang giao"  => "badge-info",
+                            "Đã giao"    => "badge-success",
+                            "Đã hủy"     => "badge-danger",
+                            _            => "badge-gray"
+                        };
+                        <div class="p-3 border-bottom border-trans d-flex align-items-center justify-content-between" style="border-bottom-color: rgba(255,255,255,0.04) !important;">
+                            <div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-bold text-white" style="font-size:0.9rem;">#@o.Id</span>
+                                    <span class="badge-pill @statusBadge" style="font-size: 0.65rem; padding: 0.25em 0.5em;">@o.Status</span>
+                                </div>
+                                <div class="small text-muted mt-1">@o.CustomerUsername • @o.OrderDate.ToString("dd/MM HH:mm")</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold" style="color:var(--ap); font-size:0.95rem;">@o.FormattedTotal</div>
+                                <a asp-area="Admin" asp-controller="Order" asp-action="Detail" asp-route-id="@o.Id" class="small text-decoration-none text-muted" style="font-size:0.75rem;">
+                                    Chi tiết <i class="fa-solid fa-angle-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('orderChart').getContext('2d');
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Đang xử lý','Đang giao','Đã giao','Đã hủy'],
+        datasets: [{
+            data: [@Model.PendingOrders, 0, @(Model.TotalOrders - Model.PendingOrders), 0],
+            backgroundColor: [
+                'rgba(251, 191, 36, 0.8)',
+                'rgba(96, 165, 250, 0.8)',
+                'rgba(52, 211, 153, 0.8)',
+                'rgba(248, 113, 113, 0.8)'
+            ],
+            borderColor: '#121623',
+            borderWidth: 2,
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { 
+            legend: { 
+                position: 'bottom',
+                labels: {
+                    color: '#94a3b8',
+                    font: { family: 'Outfit', size: 11 }
+                }
+            } 
+        },
+        cutout: '70%'
+    }
+});
+</script>
+}

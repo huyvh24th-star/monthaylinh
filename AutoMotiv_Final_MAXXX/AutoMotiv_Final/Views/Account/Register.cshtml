@@ -1,0 +1,55 @@
+@model Web.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Đăng ký tài khoản";
+}
+
+<div class="container py-5" style="min-height:80vh;display:flex;align-items:center;">
+    <div class="row justify-content-center w-100">
+        <div class="col-md-6">
+            <div class="auth-card p-5">
+                <div class="text-center mb-4">
+                    <div style="width:60px;height:60px;background:var(--accent-color);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+                        <i class="fa-solid fa-user-plus text-white fs-4"></i>
+                    </div>
+                    <h2 class="auth-title">Đăng ký</h2>
+                    <p class="text-muted small">Tạo tài khoản để theo dõi đơn hàng và nhận ưu đãi</p>
+                </div>
+                <form asp-controller="Account" asp-action="Register" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger small rounded-3 py-2"></div>
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label small fw-bold text-muted text-uppercase" style="font-size:0.72rem;letter-spacing:0.08em;"></label>
+                        <input asp-for="FullName" class="form-control auth-input" placeholder="Họ và tên đầy đủ">
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Username" class="form-label small fw-bold text-muted text-uppercase" style="font-size:0.72rem;letter-spacing:0.08em;"></label>
+                        <input asp-for="Username" class="form-control auth-input" placeholder="Tên đăng nhập">
+                        <span asp-validation-for="Username" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label small fw-bold text-muted text-uppercase" style="font-size:0.72rem;letter-spacing:0.08em;"></label>
+                        <input asp-for="Email" class="form-control auth-input" placeholder="email@example.com">
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label small fw-bold text-muted text-uppercase" style="font-size:0.72rem;letter-spacing:0.08em;"></label>
+                        <input asp-for="Password" type="password" class="form-control auth-input" placeholder="Mật khẩu (ít nhất 6 ký tự)">
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-4">
+                        <label asp-for="ConfirmPassword" class="form-label small fw-bold text-muted text-uppercase" style="font-size:0.72rem;letter-spacing:0.08em;"></label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control auth-input" placeholder="Nhập lại mật khẩu">
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold" style="text-transform:uppercase;letter-spacing:0.08em;">
+                        Tạo tài khoản
+                    </button>
+                </form>
+                <div class="text-center mt-4">
+                    <p class="text-muted small">Đã có tài khoản? <a asp-controller="Account" asp-action="Login" style="color:var(--accent-color);font-weight:700;">Đăng nhập</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

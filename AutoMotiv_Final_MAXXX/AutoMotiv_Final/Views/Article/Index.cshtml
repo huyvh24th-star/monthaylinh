@@ -1,0 +1,46 @@
+@model List<ArticleViewModel>
+@{
+    ViewData["Title"] = "Tin tức xe";
+}
+
+<div style="background:var(--primary-color);padding:60px 0 40px;">
+    <div class="container text-center">
+        <span style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;color:var(--accent-color);">Blog & Tin tức</span>
+        <h2 class="section-title mt-2" style="color:white;">Tin tức xe hơi</h2>
+        <p style="color:rgba(255,255,255,0.5);margin-top:0.5rem;">Cập nhật thông tin xe mới, đánh giá, khuyến mãi và mẹo lái xe</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        @foreach (var a in Model)
+        {
+            <div class="col-md-4 animate__animated animate__fadeInUp">
+                <div class="product-card h-100">
+                    <div class="product-img-wrapper" style="height: 220px;">
+                        <img src="@(a.Image ?? "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=600&auto=format&fit=crop")" class="product-img" alt="@a.Title">
+                        <div class="product-badge">@a.Category</div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="text-muted small mb-2"><i class="fa-regular fa-calendar me-1"></i>@a.CreatedDate.ToString("dd/MM/yyyy")</div>
+                        <h5 class="fw-bold mb-2">
+                            <a asp-controller="Article" asp-action="Detail" asp-route-id="@a.Id" class="text-decoration-none text-dark">@a.Title</a>
+                        </h5>
+                        <p class="text-muted small mb-3 line-clamp-2">@a.Summary</p>
+                        <a asp-controller="Article" asp-action="Detail" asp-route-id="@a.Id" class="fw-bold small text-decoration-none" style="color:var(--accent-color);">
+                            Đọc tiếp <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5 text-muted">
+            <i class="fa-solid fa-newspaper opacity-25 mb-3" style="font-size: 3rem;"></i>
+            <p>Chưa có bài viết nào.</p>
+        </div>
+    }
+</div>

@@ -1,0 +1,47 @@
+@model Web.Models.SiteSettings
+@{
+    var settings = Model ?? new Web.Models.SiteSettings();
+}
+<!-- Footer -->
+<footer class="footer-section">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-md-4">
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <div style="width:36px;height:36px;background:var(--accent-color);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                        <i class="fa-solid fa-car-side text-white"></i>
+                    </div>
+                    <span class="brand-text text-white" style="font-size:1.4rem;">@settings.SiteName</span>
+                </div>
+                <p class="footer-desc">@settings.SiteTagline</p>
+                <div class="social-links mt-4">
+                    <a href="@settings.SocialFacebook" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="@settings.SocialInstagram" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="@settings.SocialTiktok" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+                </div>
+            </div>
+            <div class="col-md-2 offset-md-1">
+                <h5 class="footer-heading">Liên kết</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                    <li><a asp-controller="Product" asp-action="Index">Kho xe</a></li>
+                    <li><a asp-controller="Article" asp-action="Index">Tin tức xe</a></li>
+                    <li><a asp-controller="Feedback" asp-action="Contact">Liên hệ</a></li>
+                    <li><a asp-controller="Account" asp-action="Login">Đăng nhập</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 offset-md-1">
+                <h5 class="footer-heading">Liên hệ Showroom</h5>
+                <ul class="list-unstyled footer-contact">
+                    <li><i class="fa-solid fa-location-dot"></i> @settings.FooterAddress</li>
+                    <li><i class="fa-solid fa-phone"></i> @settings.FooterPhone</li>
+                    <li><i class="fa-solid fa-envelope"></i> @settings.FooterEmail</li>
+                    <li><i class="fa-solid fa-clock"></i> Thứ 2 – CN: 8:00 – 18:00</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom mt-5 pt-4 text-center">
+            <p class="mb-0 small" style="color:rgba(255,255,255,0.25);">© @DateTime.Now.Year @settings.SiteName. Đại lý xe ô tô uy tín hàng đầu Việt Nam.</p>
+        </div>
+    </div>
+</footer>

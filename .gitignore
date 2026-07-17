@@ -1,0 +1,23 @@
+## Ignore Visual Studio temporary files, build results, and user settings
+[Oo]bj/
+[Bb]in/
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio cache directory
+.vs/
+
+# Publish folders
+[Pp]ublish/
+
+# Secrets / Config
+appsettings.Development.json
+
+# IDEs
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates

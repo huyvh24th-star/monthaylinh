@@ -1,0 +1,106 @@
+@model List<FeedbackAdminListViewModel>
+@{ ViewData["Title"] = "Phản hồi & Liên hệ"; }
+
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <div class="breadcrumb-simple"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a> / Phản hồi</div>
+        <h1 class="page-title">Phản hồi &amp; Liên hệ</h1>
+    </div>
+    <div class="d-flex gap-2 align-items-center">
+        <span class="badge-pill badge-danger" style="font-size:.82rem;padding:.38em .9em;">
+            @Model.Count(f => !f.HasReply) chưa trả lời
+        </span>
+    </div>
+</div>
+
+<div class="acard">
+    <div class="table-toolbar">
+        <div class="table-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="searchInput" type="text" placeholder="Tìm tên, chủ đề...">
+        </div>
+        <span class="text-muted" style="font-size:.78rem;">Tổng: @Model.Count phản hồi</span>
+    </div>
+    <div class="atable-wrap">
+        <table class="atable" id="mainTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Người gửi</th>
+                    <th>Loại</th>
+                    <th>Chủ đề</th>
+                    <th>Ngày gửi</th>
+                    <th>Trạng thái</th>
+                    <th style="width:90px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7"><div class="empty-state"><i class="fa-solid fa-comments"></i><p>Chưa có phản hồi nào</p></div></td></tr>
+                }
+                @foreach (var f in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold text-muted" style="font-size:.78rem;">@f.Id</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="av" style="background:@(f.IsGuest ? "#6b7280" : "var(--ap)");font-size:.65rem;">
+                                    @(f.DisplayName.Substring(0,1).ToUpper())
+                                </div>
+                                <div>
+                                    <div style="font-size:.85rem;font-weight:600;line-height:1.2;">@f.DisplayName</div>
+                                    @if (f.IsGuest && !string.IsNullOrEmpty(f.GuestPhone))
+                                    {
+                                        <div style="font-size:.72rem;color:#9ca3af;">@f.GuestPhone</div>
+                                    }
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            @if (f.IsGuest)
+                            {
+                                <span class="badge-pill badge-gray">Khách vãng lai</span>
+                            }
+                            else
+                            {
+                                <span class="badge-pill badge-purple">Thành viên</span>
+                            }
+                        </td>
+                        <td style="max-width:240px;">
+                            <span style="font-size:.85rem;font-weight:500;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">@f.Title</span>
+                        </td>
+                        <td><span style="font-size:.78rem;color:#6b7280;">@f.CreatedDate.ToString("dd/MM/yyyy HH:mm")</span></td>
+                        <td>
+                            @if (f.HasReply)
+                            {
+                                <span class="badge-pill badge-success">Đã trả lời</span>
+                            }
+                            else
+                            {
+                                <span class="badge-pill badge-danger">Chưa trả lời</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a asp-area="Admin" asp-controller="Feedback" asp-action="Detail" asp-route-id="@f.Id"
+                                   class="act-btn act-btn-view" title="Chi tiết"><i class="fa-solid fa-eye"></i></a>
+                                <a asp-area="Admin" asp-controller="Feedback" asp-action="Reply" asp-route-id="@f.Id"
+                                   class="act-btn act-btn-reply" title="Trả lời"><i class="fa-solid fa-reply"></i></a>
+                                <form asp-area="Admin" asp-controller="Feedback" asp-action="Delete" asp-route-id="@f.Id"
+                                      method="post" onsubmit="return confirm('Xóa phản hồi này?')" style="display:contents;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="act-btn act-btn-del" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>initTableSearch('searchInput','mainTable');</script>
+}

@@ -1,0 +1,88 @@
+@model Web.Models.SiteSettings
+@{
+    bool isAuthenticated = User.Identity != null && User.Identity.IsAuthenticated;
+    bool isAdmin = User.IsInRole("Admin");
+    string? username = User.Identity?.Name;
+    var settings = Model ?? new Web.Models.SiteSettings();
+}
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" asp-controller="Home" asp-action="Index">
+            <div class="brand-logo me-2">
+                @if (!string.IsNullOrEmpty(settings.SiteLogoUrl))
+                {
+                    <img src="@settings.SiteLogoUrl" style="width:100%;height:100%;object-fit:cover;border-radius:6px;" alt="Logo" />
+                }
+                else
+                {
+                    <i class="fa-solid @(string.IsNullOrEmpty(settings.SiteLogoIcon) ? "fa-car-side" : settings.SiteLogoIcon)"></i>
+                }
+            </div>
+            <span class="brand-text">@settings.SiteName</span>
+        </a>
+        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="Product" asp-action="Index">Xe bán</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="Article" asp-action="Index">Tin tức</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="Feedback" asp-action="Contact">Liên hệ</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="Post" asp-action="Index"><i class="fa-solid fa-users me-1"></i>Cộng đồng</a></li>
+                @if (isAdmin)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold" asp-area="Admin" asp-controller="Dashboard" asp-action="Index" style="color:var(--accent-color)!important;">
+                            <i class="fa-solid fa-gauge-high me-1"></i>Quản trị
+                        </a>
+                    </li>
+                }
+                <li class="nav-item position-relative mx-lg-2">
+                    <a class="nav-link cart-trigger" href="#" id="cart-trigger-btn">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span id="cart-count" class="badge rounded-pill bg-primary cart-badge">0</span>
+                    </a>
+                </li>
+                <li class="nav-item ms-lg-3" id="auth-nav">
+                    @if (isAuthenticated)
+                    {
+                        <div class="dropdown">
+                            <button class="btn btn-sm dropdown-toggle rounded-pill px-4 shadow-sm" type="button" data-bs-toggle="dropdown"
+                                    style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-weight:600;">
+                                <i class="fa-solid fa-user me-2"></i>@username
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-3 mt-2">
+                                <li>
+                                    <a class="dropdown-item py-2" asp-controller="Order" asp-action="MyOrders">
+                                        <i class="fa-solid fa-file-invoice me-2"></i>Đơn hàng của tôi
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2" asp-controller="Account" asp-action="Profile">
+                                        <i class="fa-solid fa-user-gear me-2"></i>Thông tin tài khoản
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider opacity-50"></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="dropdown-item py-2 text-danger">
+                                            <i class="fa-solid fa-right-from-bracket me-2"></i>Đăng xuất
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <a class="btn btn-primary rounded-pill px-4 shadow-sm" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                    }
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
